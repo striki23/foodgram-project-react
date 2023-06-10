@@ -1,0 +1,6 @@
+Django==3.2
+djangorestframework==3.12.4
+Pillow==9.5.0
+djangorestframework-simplejwt==4.7.2
+djoser==2.2.0
+django-filter

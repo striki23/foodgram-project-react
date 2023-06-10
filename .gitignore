@@ -130,3 +130,11 @@ dmypy.json
 
 # .idea
 .idea
+
+# .node_modules
+.node_modules
+node_modules
+.node_modules/
+yarn.lock
+install_nvm.sh
+package-lock.json
