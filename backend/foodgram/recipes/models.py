@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -23,10 +24,12 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=100)
+        max_length=100,
+        unique=True)
     color = models.CharField(
         max_length=7,
-        default="#ffffff"
+        default='#FF0000',
+        unique=True
     )
     slug = models.SlugField(unique=True,
                             verbose_name='тег')
@@ -71,7 +74,9 @@ class Recipe(models.Model):
     )
 
     cooking_time = models.PositiveIntegerField(
-        verbose_name='Время приготовления в минутах')
+        verbose_name='Время приготовления в минутах',
+        validators=[MinValueValidator(1)],
+    )
 
     def __str__(self):
         return self.name

@@ -24,9 +24,9 @@ class User(AbstractUser):
                                  blank=False,
                                  null=False)
     password = models.CharField(verbose_name='Пароль',
-                                 max_length=150,
-                                 blank=False,
-                                 null=False)
+                                  max_length=150,
+                                  blank=False,
+                                  null=False)
 
     def __str__(self):
         return self.username
@@ -51,11 +51,11 @@ class Subscribe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'author'],
-                name='unique_follow'
+                name='Данная подписка уже существует'
             ),
             models.CheckConstraint(
-                name='prevent_self_follow',
-                check=~models.Q(user=models.F('author')),
+                name='Нельзя подписаться на самого себя',
+                check=~models.Q(author=models.F('user')),
             )]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'

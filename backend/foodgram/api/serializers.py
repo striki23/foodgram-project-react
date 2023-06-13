@@ -5,44 +5,50 @@ from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
 from users.models import User, Subscribe
+from djoser.serializers import UserSerializer
+from rest_framework.serializers import PrimaryKeyRelatedField
 
-class UsersSerializer(serializers.ModelSerializer):
-    # is_subscribed = serializers.SerializerMethodField 
+class CustomUserSerializer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField()
 
-    # def create(self, validated_data):
-    #     user = User.objects.create(
-    #         username = validated_data['username'],
-    #         first_name = validated_data['first_name'],
-    #         last_name = validated_data['last_name'],
-    #         email = validated_data['email'],
-    #     )
-    #     user.set_password(validated_data['password'])
-    #     user.save()
-    #     return user
+    def create(self, validated_data):
+        user = User.objects.create(
+            username = validated_data['username'],
+            first_name = validated_data['first_name'],
+            last_name = validated_data['last_name'],
+            email = validated_data['email'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+    
 
     def get_is_subscribed(self, obj):
-        pass
-    #     return Subscribe.objects.filter(user=self.context['request'].user, author=obj).exists()
+        return Subscribe.objects.filter(user=self.context['request'].user.id, author=obj).exists()
     
-    class Meta:
-            model = User
-            fields = ('id', 'username',
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'password'
-                    # 'is_subscribed'
-                    )
-            write_only_fields = ('password',)
-
-class SignUpSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ('id', 'username',
-                  'first_name',
-                  'last_name',
-                  'email',
-                  )
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'is_subscribed',
+                    'password'
+                    )
+        extra_kwargs = {'password': {'write_only': True}, }
+
+class SubscribeSerializer(CustomUserSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            )
+
     
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
@@ -58,17 +64,25 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
 
+class AmountIngredientSerializer(serializers.ModelSerializer):
+    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+
+    class Meta:
+        model = AmountIngredient
+        fields = ('id', 'amount')
+
 class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
-class RecipeSerializer(serializers.ModelSerializer):
-    ingredients = serializers.SerializerMethodField()
-    tags = TagSerializer(many=True)
-    image = Base64ImageField(required=False, allow_null=True)
-    author = UsersSerializer(read_only=True)
+class RecipeCreateSerializer(serializers.ModelSerializer):
+    ingredients = AmountIngredientSerializer(many=True, read_only=True)
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
+                                              many=True)
+    image = Base64ImageField()
+    author = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = Recipe
@@ -93,7 +107,6 @@ class RecipeSerializer(serializers.ModelSerializer):
                 ))
         AmountIngredient.objects.bulk_create(list_ingredients)
 
-
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
@@ -102,4 +115,32 @@ class RecipeSerializer(serializers.ModelSerializer):
         self.create_ingredients(ingredients, recipe)
         return recipe
 
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags', None)
+        if tags is not None:
+            instance.tags.set(tags)
+        ingreds = validated_data.get('ingredients')
+        print (ingreds)
+        if ingreds is not None:
+            AmountIngredient.objects.filter(recipe=instance).delete()
+            self.create_ingredients(ingreds, instance)
+        return super().update(instance, validated_data)
+    
+class RecipeReadSerializer(serializers.ModelSerializer):
+    ingredients = serializers.SerializerMethodField()
+    tags = TagSerializer(many=True)
+    image = Base64ImageField(required=False, allow_null=True)
+    author = CustomUserSerializer(read_only=True)
 
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'text', 'author', 'cooking_time', 'tags', 'image', 'ingredients')
+    
+    def get_ingredients(self, recipe):
+        ingredients = recipe.ingredients.values(
+            'id',
+            'name',
+            'measurement_unit',
+            amount = F('ingredient__amount')
+        )
+        return ingredients
