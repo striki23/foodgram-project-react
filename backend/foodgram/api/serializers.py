@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import base64
-from recipes.models import Recipe, Ingredient, Tag, AmountIngredient
+from recipes.models import Recipe, Ingredient, Tag, AmountIngredient, FavoriteRecipe
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
@@ -38,6 +38,9 @@ class CustomUserSerializer(UserSerializer):
         extra_kwargs = {'password': {'write_only': True}, }
 
 class SubscribeSerializer(CustomUserSerializer):
+    is_subscribed = serializers.BooleanField(default=True)
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(default=0)
 
     class Meta:
         model = User
@@ -47,9 +50,14 @@ class SubscribeSerializer(CustomUserSerializer):
             'first_name',
             'last_name',
             'email',
+            'is_subscribed',
+            'recipes',
+            'recipes_count'
             )
 
-    
+    def get_recipes(self, obj):
+        pass
+
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
@@ -78,7 +86,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit')
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
-    ingredients = AmountIngredientSerializer(many=True, read_only=True)
+    ingredients = AmountIngredientSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                               many=True)
     image = Base64ImageField()
@@ -119,8 +127,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         tags = validated_data.pop('tags', None)
         if tags is not None:
             instance.tags.set(tags)
-        ingreds = validated_data.get('ingredients')
-        print (ingreds)
+        ingreds = validated_data.pop('ingredients', None)
         if ingreds is not None:
             AmountIngredient.objects.filter(recipe=instance).delete()
             self.create_ingredients(ingreds, instance)
@@ -144,3 +151,11 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             amount = F('ingredient__amount')
         )
         return ingredients
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    """Сериализатор избранных рецептов"""
+    image = Base64ImageField()
+        
+    class Meta:   
+        model = Recipe
+        fields = ("id", "name", "image", "cooking_time")

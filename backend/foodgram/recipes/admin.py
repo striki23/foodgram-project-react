@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from recipes.models import Recipe, Ingredient, Tag, AmountIngredient
+from recipes.models import Recipe, Ingredient, Tag, AmountIngredient, FavoriteRecipe
 
 class AmountIngredientInline(admin.TabularInline):
     model = AmountIngredient
@@ -26,4 +26,5 @@ class RecipeAdmin(admin.ModelAdmin):
     # autocomplete_fields = ("tags",)
     list_filter = ('name','author')
     inlines = (AmountIngredientInline,)
-    
+
+admin.site.register(FavoriteRecipe)

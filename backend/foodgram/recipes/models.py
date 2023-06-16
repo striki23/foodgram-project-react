@@ -132,4 +132,31 @@ class AmountIngredient(models.Model):
     def __str__(self) -> str:
         return f'{self.amount} {self.ingredients}'
     
+
+class FavoriteRecipe(models.Model):
+        """Избранные рецепты."""
+        user = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE,
+            related_name="favorites",
+            verbose_name="Пользователь",
+        )
+        recipe = models.ForeignKey(
+            Recipe,
+            on_delete=models.CASCADE,
+            related_name="favorites",
+            verbose_name="Рецепт",
+        )
+
+        class Meta:
+            verbose_name = "Избранное"
+            verbose_name_plural = "Избранные"
+            constraints = (
+                models.UniqueConstraint(
+                    fields=("user", "recipe"), name="uniq_favorite_user_recipe"
+                ),
+            )
+
+        def __str__(self):
+            return f"{self.user} -> {self.recipe}"
     

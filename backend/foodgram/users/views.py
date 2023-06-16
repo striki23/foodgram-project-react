@@ -23,22 +23,10 @@ class UsersViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(self.object)
         return Response(serializer.data)
 
-
-class SubscribeViewSet(viewsets.ModelViewSet):
-    #queryset = User.objects.all()
-    #serializer_class = UsersSerializer
-    
-    @action(url_path='subscriptions', methods=['get'], detail=False,
-            #permission_classes=[IsAuthenticated]
-        )
+    @action(methods=['get'], detail=False, permission_classes=[IsAuthenticated])
     
     def subscriptions(self, request):
         user = self.request.user
-        queryset = User.objects.filter(following__user=user)
-        pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(
-            pages,
-            many=True,
-            context={'request': request}
-        )
-        return self.get_paginated_response(serializer.data)
+        subscriptions = User.objects.filter(following__user=user)
+        serializer = SubscribeSerializer(subscriptions, many=True)
+        return Response(serializer.data)
