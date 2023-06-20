@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator
 User = get_user_model()
 
 class Ingredient(models.Model):
+    """Ингредиенты. Список возможных ингредиентов задаются админом."""
     name = models.CharField(
         'Название ингредиента',
         max_length=100
@@ -15,7 +16,6 @@ class Ingredient(models.Model):
     )
 
     def __str__(self):
-        #return f'{self.name} {self.measurement_unit}'
         return self.name
         
     class Meta:
@@ -23,6 +23,7 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
 class Tag(models.Model):
+    """Теги. Список возможных тегов задаются админом."""
     name = models.CharField(
         max_length=100,
         unique=True)
@@ -42,6 +43,7 @@ class Tag(models.Model):
         verbose_name_plural = 'Теги'
 
 class Recipe(models.Model):
+    """Рецепты"""
     name = models.CharField(
         'Название рецепта',
         max_length=100,
@@ -159,4 +161,31 @@ class FavoriteRecipe(models.Model):
 
         def __str__(self):
             return f"{self.user} -> {self.recipe}"
-    
+
+
+class ShoppingCart(models.Model):
+        """Список покупок."""
+        user = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE,
+            related_name="carts",
+            verbose_name="Пользователь",
+        )
+        recipe = models.ForeignKey(
+            Recipe,
+            on_delete=models.CASCADE,
+            related_name="carts",
+            verbose_name="Рецепт",
+        )
+
+        class Meta:
+            verbose_name = "Список покупок"
+            verbose_name_plural = "Список покупок"
+            constraints = (
+                models.UniqueConstraint(
+                    fields=("user", "recipe"), name="uniq_shoppinf_cart_user_recipe"
+                ),
+            )
+
+        def __str__(self):
+            return f"{self.user} -> {self.recipe}"

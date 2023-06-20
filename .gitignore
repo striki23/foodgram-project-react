@@ -138,3 +138,7 @@ node_modules
 yarn.lock
 install_nvm.sh
 package-lock.json
+
+# .media
+.media
+.media/
