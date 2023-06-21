@@ -4,16 +4,15 @@ from rest_framework.authtoken import views
 
 from .views import RecipeViewSet, IngredientViewSet, TagViewSet, UsersViewSet
 
-app_name = 'api'
+app_name = "api"
 
 router = DefaultRouter()
-router.register('users', UsersViewSet, basename='users')
-router.register('recipes', RecipeViewSet, basename='recipes')
-router.register('ingredients', IngredientViewSet, basename='ingredients')
-router.register('tags', TagViewSet, basename='tags')
+router.register("users", UsersViewSet, basename="users")
+router.register("recipes", RecipeViewSet, basename="recipes")
+router.register("ingredients", IngredientViewSet, basename="ingredients")
+router.register("tags", TagViewSet, basename="tags")
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('auth/', include('djoser.urls.authtoken')),
-    
+    path("", include(router.urls)),
+    path("auth/", include("djoser.urls.authtoken")),
 ]

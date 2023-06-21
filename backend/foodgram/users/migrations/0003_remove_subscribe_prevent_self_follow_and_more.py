@@ -4,18 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0002_alter_user_first_name_alter_user_last_name_and_more'),
+        ("users", "0002_alter_user_first_name_alter_user_last_name_and_more"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='subscribe',
-            name='prevent_self_follow',
+            model_name="subscribe",
+            name="prevent_self_follow",
         ),
         migrations.AddConstraint(
-            model_name='subscribe',
-            constraint=models.CheckConstraint(check=models.Q(('author', models.F('user')), _negated=True), name='prevent_self_follow'),
+            model_name="subscribe",
+            constraint=models.CheckConstraint(
+                check=models.Q(("author", models.F("user")), _negated=True),
+                name="prevent_self_follow",
+            ),
         ),
     ]

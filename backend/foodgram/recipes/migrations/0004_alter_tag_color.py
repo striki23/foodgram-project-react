@@ -5,15 +5,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('recipes', '0003_alter_ingredient_options_and_more'),
+        ("recipes", "0003_alter_ingredient_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='tag',
-            name='color',
-            field=colorfield.fields.ColorField(default='#FF0000', image_field=None, max_length=7, samples=None),
+            model_name="tag",
+            name="color",
+            field=colorfield.fields.ColorField(
+                default="#FF0000", image_field=None, max_length=7, samples=None
+            ),
         ),
     ]

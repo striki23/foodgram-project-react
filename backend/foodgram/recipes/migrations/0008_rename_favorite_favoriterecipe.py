@@ -5,15 +5,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('recipes', '0007_favorite_favorite_uniq_favorite_user_recipe'),
+        ("recipes", "0007_favorite_favorite_uniq_favorite_user_recipe"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Favorite',
-            new_name='FavoriteRecipe',
+            old_name="Favorite",
+            new_name="FavoriteRecipe",
         ),
     ]
