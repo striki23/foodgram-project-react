@@ -12,9 +12,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="tag",
             name="color",
-            field=models.CharField(
-                default="#FF0000", max_length=7, unique=True
-            ),
+            field=models.CharField(default="#FF0000", max_length=7, unique=True),
         ),
         migrations.AlterField(
             model_name="tag",

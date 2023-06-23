@@ -1,20 +1,16 @@
-from rest_framework import serializers
 import base64
-from recipes.models import (
-    Recipe,
-    Ingredient,
-    Tag,
-    AmountIngredient,
-    FavoriteRecipe,
-    ShoppingCart,
-)
+
 from django.core.files.base import ContentFile
 from django.db.models import F
 from django.shortcuts import get_object_or_404
-from users.models import User, Subscribe
 from djoser.serializers import UserSerializer
-from rest_framework.serializers import PrimaryKeyRelatedField
+from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.serializers import PrimaryKeyRelatedField
+
+from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
+                            Recipe, ShoppingCart, Tag)
+from users.models import Subscribe, User
 
 
 class CustomUserSerializer(UserSerializer):
@@ -87,14 +83,14 @@ class SubscribeSerializer(CustomUserSerializer):
         request = self.context.get("request")
         author = self.instance
         user = request.user
-        if request.method == "POST":
+        if request.method == "DELETE":
+            if not Subscribe.objects.filter(user=user, author=author).exists():
+                raise ValidationError("Подписки не было")
+        else:
             if Subscribe.objects.filter(user=user, author=author).exists():
                 raise ValidationError("Повторая подписка")
             if author == user:
                 raise ValidationError("Подписка на себя")
-        elif request.method == "DELETE":
-            if not Subscribe.objects.filter(user=user, author=author).exists():
-                raise ValidationError("Подписки не было")
         return data
 
 
@@ -129,9 +125,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True
-    )
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
 
@@ -216,14 +210,10 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         user = self.context["request"].user
-        if user.is_anonymous:
-            return False
         return FavoriteRecipe.objects.filter(user=user, recipe=obj).exists()
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context["request"].user
-        if user.is_anonymous:
-            return False
         return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
 
 
@@ -235,15 +225,3 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", "name", "image", "cooking_time")
-
-    # def validate(self, data, pk=None):
-    #     request = self.context.get("request")
-    #     recipe = self.instance
-    #     user = request.user
-    #     if request.method == "POST":
-    #         if FavoriteRecipe.objects.filter(user=user, recipe=recipe).exists():
-    #             raise ValidationError(f'Рецепт {pk} уже добавлен в избранное')
-    #     elif request.method == "DELETE":
-    #         if not FavoriteRecipe.objects.filter(user=user, recipe=recipe).exists():
-    #             raise ValidationError(f'Рецепта {pk} нет в избранном')
-    #     return data
