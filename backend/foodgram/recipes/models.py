@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from api.myconstants import *
+from api.myconstants import LENGTH_HEX_COLOR, LENGTH_TAG_INGRED_NAME
 
 User = get_user_model()
 

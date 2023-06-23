@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.myconstants import *
+from api.myconstants import LENGTH_EMAIL, LENGTH_SHORTWORD
 from users.validators import validate_username
 
 
