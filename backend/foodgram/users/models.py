@@ -23,13 +23,22 @@ class User(AbstractUser):
         null=False,
     )
     first_name = models.CharField(
-        max_length=LENGTH_SHORTWORD, verbose_name="Имя", blank=False, null=False
+        max_length=LENGTH_SHORTWORD,
+        verbose_name="Имя",
+        blank=False,
+        null=False,
     )
     last_name = models.CharField(
-        max_length=LENGTH_SHORTWORD, verbose_name="Фамилия", blank=False, null=False
+        max_length=LENGTH_SHORTWORD,
+        verbose_name="Фамилия",
+        blank=False,
+        null=False,
     )
     password = models.CharField(
-        max_length=LENGTH_SHORTWORD, verbose_name="Пароль", blank=False, null=False
+        max_length=LENGTH_SHORTWORD,
+        verbose_name="Пароль",
+        blank=False,
+        null=False,
     )
 
     class Meta:
@@ -41,8 +50,12 @@ class User(AbstractUser):
 
 
 class Subscribe(models.Model):
-    user = models.ForeignKey(User, related_name="follower", on_delete=models.CASCADE)
-    author = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, related_name="follower", on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(
+        User, related_name="following", on_delete=models.CASCADE
+    )
 
     class Meta:
         constraints = [

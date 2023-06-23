@@ -2,8 +2,13 @@ from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 
 from api.forms import RecipeChangeListForm
-from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
-                            Recipe, Tag)
+from recipes.models import (
+    AmountIngredient,
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    Tag,
+)
 
 
 class AmountIngredientInline(admin.TabularInline):
@@ -57,7 +62,13 @@ class RecipeChangeList(ChangeList):
             search_help_text,
         )
 
-        self.list_display = ["id", "name", "author", "ingredients_names", "tags"]
+        self.list_display = [
+            "id",
+            "name",
+            "author",
+            "ingredients_names",
+            "tags",
+        ]
         self.list_display_links = ["name"]
         self.search_fields = ("name", "author", "tag")
         self.list_filter = ("name", "author")

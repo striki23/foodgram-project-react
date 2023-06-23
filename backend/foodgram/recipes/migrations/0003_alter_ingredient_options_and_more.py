@@ -40,6 +40,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name="ingredient",
             name="name",
-            field=models.CharField(max_length=100, verbose_name="Название ингредиента"),
+            field=models.CharField(
+                max_length=100, verbose_name="Название ингредиента"
+            ),
         ),
     ]
