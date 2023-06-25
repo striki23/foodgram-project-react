@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from api.myconstants import LENGTH_HEX_COLOR, LENGTH_TAG_INGRED_NAME
+from foodgram.settings import MY_CONSTANTS
 
 User = get_user_model()
 
@@ -11,10 +11,10 @@ class Ingredient(models.Model):
     """Ингредиенты. Список возможных ингредиентов задаются админом."""
 
     name = models.CharField(
-        "Название ингредиента", max_length=LENGTH_TAG_INGRED_NAME
+        "Название ингредиента", max_length=MY_CONSTANTS['LENGTH_TAG_INGRED_NAME']
     )
     measurement_unit = models.CharField(
-        "Единица измерения", max_length=LENGTH_HEX_COLOR
+        "Единица измерения", max_length=MY_CONSTANTS['LENGTH_MEASUREMENT_UNIT']
     )
 
     class Meta:
@@ -29,9 +29,9 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Теги. Список возможных тегов задаются админом."""
 
-    name = models.CharField(max_length=LENGTH_TAG_INGRED_NAME, unique=True)
+    name = models.CharField(max_length=MY_CONSTANTS['LENGTH_TAG_INGRED_NAME'], unique=True)
     color = models.CharField(
-        max_length=LENGTH_HEX_COLOR, default="#FF0000", unique=True
+        max_length=MY_CONSTANTS['LENGTH_HEX_COLOR'], default="#FF0000", unique=True
     )
     slug = models.SlugField(unique=True, verbose_name="тег")
 

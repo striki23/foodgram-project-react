@@ -7,6 +7,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
 
+
 from recipes.models import (
     AmountIngredient,
     FavoriteRecipe,
@@ -19,7 +20,7 @@ from users.models import Subscribe, User
 
 
 class CustomUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.BooleanField(default=False)
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -32,10 +33,6 @@ class CustomUserSerializer(UserSerializer):
         user.save()
         return user
 
-    def get_is_subscribed(self, obj):
-        return Subscribe.objects.filter(
-            user=self.context["request"].user.id, author=obj
-        ).exists()
 
     class Meta:
         model = User
@@ -56,7 +53,9 @@ class CustomUserSerializer(UserSerializer):
 class SubscribeSerializer(CustomUserSerializer):
     is_subscribed = serializers.BooleanField(default=True)
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField()
+    #recipes_count = serializers.SerializerMethodField()
+
 
     class Meta:
         model = User
@@ -72,6 +71,7 @@ class SubscribeSerializer(CustomUserSerializer):
         )
         read_only_fields = ("email", "username", "first_name", "last_name")
 
+
     def get_recipes(self, obj):
         request = self.context.get("request")
         recipes_limit = request.GET.get("recipes_limit")
@@ -80,21 +80,21 @@ class SubscribeSerializer(CustomUserSerializer):
             recipes = recipes[: int(recipes_limit)]
         serializer = ShortRecipeSerializer(recipes, many=True)
         return serializer.data
-
-    def get_recipes_count(self, obj):
-        return obj.recipe_posts.count()
+        
+    # def get_recipes_count(self, obj): 
+    #         return obj.recipe_posts.count()
 
     def validate(self, data):
         request = self.context.get("request")
         author = self.instance
-        user = request.user
+        check_exist_sibscribe = Subscribe.objects.filter(user=request.user, author=author).exists()
         if request.method == "DELETE":
-            if not Subscribe.objects.filter(user=user, author=author).exists():
+            if not check_exist_sibscribe:
                 raise ValidationError("Подписки не было")
         else:
-            if Subscribe.objects.filter(user=user, author=author).exists():
+            if check_exist_sibscribe:
                 raise ValidationError("Повторая подписка")
-            if author == user:
+            if author == request.user:
                 raise ValidationError("Подписка на себя")
         return data
 
@@ -150,10 +150,9 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, recipe):
-        ingredients = recipe.ingredients.values(
+        return recipe.ingredients.values(
             "id", "name", "measurement_unit", amount=F("ingredient__amount")
         )
-        return ingredients
 
     def create_ingredients(self, ingredients, recipe):
         list_ingredients = []

@@ -1,13 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from api.myconstants import LENGTH_EMAIL, LENGTH_SHORTWORD
+from foodgram.settings import MY_CONSTANTS
 from users.validators import validate_username
 
 
 class User(AbstractUser):
     username = models.CharField(
-        max_length=LENGTH_SHORTWORD,
+        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
         verbose_name="Пользователь",
         validators=(validate_username,),
         unique=True,
@@ -16,26 +16,26 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(
-        max_length=LENGTH_EMAIL,
+        max_length=MY_CONSTANTS['LENGTH_EMAIL'],
         verbose_name="E-Mail",
         unique=True,
         blank=False,
         null=False,
     )
     first_name = models.CharField(
-        max_length=LENGTH_SHORTWORD,
+        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
         verbose_name="Имя",
         blank=False,
         null=False,
     )
     last_name = models.CharField(
-        max_length=LENGTH_SHORTWORD,
+        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
         verbose_name="Фамилия",
         blank=False,
         null=False,
     )
     password = models.CharField(
-        max_length=LENGTH_SHORTWORD,
+        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
         verbose_name="Пароль",
         blank=False,
         null=False,
@@ -70,3 +70,6 @@ class Subscribe(models.Model):
         ]
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
+
+    def __str__(self):
+        return f"{self.user} -> {self.author}"

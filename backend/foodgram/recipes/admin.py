@@ -73,6 +73,9 @@ class RecipeChangeList(ChangeList):
         self.search_fields = ("name", "author", "tag")
         self.list_filter = ("name", "author")
         self.list_editable = ["tags"]
+        
+class IngredientsInline(admin.TabularInline):
+    model = AmountIngredient
 
 
 @admin.register(Recipe)
@@ -83,6 +86,7 @@ class RecipeAdmin(admin.ModelAdmin):
     def get_changelist_form(self, request, **kwargs):
         return RecipeChangeListForm
 
+    inlines = (IngredientsInline,)
 
 admin.site.register(FavoriteRecipe)
 admin.site.register(Tag)

@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -145,3 +148,13 @@ CSV_FILE_PATH = os.path.join(BASE_DIR, "data")
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+MY_CONSTANTS = {
+    'LENGTH_SHORTWORD': 50,
+    'LENGTH_TAG_INGRED_NAME': 100,
+    'LENGTH_MEASUREMENT_UNIT': 10,
+    'LENGTH_HEX_COLOR': 7,
+    'LENGTH_WORD': 150,
+    'LENGTH_EMAIL': 254,
+    'MAX_LENGTH_50': 50,
+}
