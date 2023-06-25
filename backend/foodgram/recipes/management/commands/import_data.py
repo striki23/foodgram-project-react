@@ -15,12 +15,6 @@ from recipes.models import Ingredient
 
 class Command(BaseCommand):
     help = "Load from csv file into the database"
-    option_list = BaseCommand.option_list + (
-        make_option('--del',
-            action='update_db_ingredients',
-            help='Delete all ingredients',
-            dest='clean_ingredients',
-            default=False))
 
 
     def handle(self, *args, **options):
@@ -30,15 +24,13 @@ class Command(BaseCommand):
                 reader = csv.reader(f, delimiter=",")
                 next(reader)
 
-                if options.get('your_name_for_delete'):
-                    Ingredient.objects.all().delete()
-
+                cnt = 0
                 for row in reader:
                     print(row)
+                    obj, created = Ingredient.objects.get_or_create(name=row[0], measurement_unit=row[1])
+                    if created == True:
+                        cnt += 1
+                
 
-                    record = Ingredient(name=row[0], measurement_unit=row[1])
-                    record.save()
-
-                cnt = Ingredient.objects.count()
                 print("-" * 80)
                 print(f"Loaded into model Ingredient: {cnt} row(s)")

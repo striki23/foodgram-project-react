@@ -89,6 +89,7 @@ class UsersViewSet(DjUserViewSet):
     )
     def subscribe(self, request, id):
         author = get_object_or_404(User, id=id)
+        author.recipes_count = author.recipe_posts.count()
         serializer = SubscribeSerializer(
             author, data=request.data, context={"request": request}
         )

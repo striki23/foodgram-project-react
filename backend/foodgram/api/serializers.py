@@ -53,8 +53,7 @@ class CustomUserSerializer(UserSerializer):
 class SubscribeSerializer(CustomUserSerializer):
     is_subscribed = serializers.BooleanField(default=True)
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.IntegerField()
-    #recipes_count = serializers.SerializerMethodField()
+    recipes_count = serializers.IntegerField(default=0)
 
 
     class Meta:
@@ -69,7 +68,7 @@ class SubscribeSerializer(CustomUserSerializer):
             "recipes",
             "recipes_count",
         )
-        read_only_fields = ("email", "username", "first_name", "last_name")
+        read_only_fields = ("email", "username", "first_name", "last_name", "recipes_count")
 
 
     def get_recipes(self, obj):
