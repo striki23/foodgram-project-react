@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -134,7 +133,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 recipe, context={"request": request}
             )
             return Response(serializer.data)
-        # если не обрабатывать этот случай вернется 404 ошибка, а в соотв с redoc должна 400
+        # если не обрабатывать этот случай вернется 404 ошибка,
+        # а в соотв с redoc должна 400
         if not check_exist_favorite:
             return Response(
                 {"errors": "Рецепта нет в избранном"},
@@ -170,7 +170,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
-        # если не обрабатывать этот случай вернется 404 ошибка, а в соотв с redoc должна 400
+        # если не обрабатывать этот случай вернется 404 ошибка,
+        # а в соотв с redoc должна 400
         if not check_exist_cart:
             return Response(
                 {"errors": "Рецепт не был в корзине"},
