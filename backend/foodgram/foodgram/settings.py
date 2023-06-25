@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -72,7 +73,7 @@ WSGI_APPLICATION = "foodgram.wsgi.application"
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-"default": {
+    "default": {
         "ENGINE": os.getenv("DB_ENGINE", "django.db.backends.postgresql"),
         "NAME": os.getenv("DB_NAME"),
         "USER": os.getenv("POSTGRES_USER"),
@@ -110,9 +111,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
-    "DEFAULT_FILTER_BACKENDS": (
-        "django_filters.rest_framework.DjangoFilterBackend",
-    ),
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
 
 DJOSER = {
@@ -154,11 +153,11 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MY_CONSTANTS = {
-    'LENGTH_SHORTWORD': 50,
-    'LENGTH_TAG_INGRED_NAME': 100,
-    'LENGTH_MEASUREMENT_UNIT': 10,
-    'LENGTH_HEX_COLOR': 7,
-    'LENGTH_WORD': 150,
-    'LENGTH_EMAIL': 254,
-    'MAX_LENGTH_50': 50,
+    "LENGTH_SHORTWORD": 50,
+    "LENGTH_TAG_INGRED_NAME": 100,
+    "LENGTH_MEASUREMENT_UNIT": 10,
+    "LENGTH_HEX_COLOR": 7,
+    "LENGTH_WORD": 150,
+    "LENGTH_EMAIL": 254,
+    "MAX_LENGTH_50": 50,
 }

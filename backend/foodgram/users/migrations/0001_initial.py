@@ -82,9 +82,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "first_name",
-                    models.CharField(
-                        blank=True, max_length=150, verbose_name="Имя"
-                    ),
+                    models.CharField(blank=True, max_length=150, verbose_name="Имя"),
                 ),
                 (
                     "last_name",

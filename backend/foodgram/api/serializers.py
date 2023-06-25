@@ -7,15 +7,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
 
-
-from recipes.models import (
-    AmountIngredient,
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
+from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
+                            Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 
@@ -32,7 +25,6 @@ class CustomUserSerializer(UserSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
-
 
     class Meta:
         model = User
@@ -55,7 +47,6 @@ class SubscribeSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.IntegerField(default=0)
 
-
     class Meta:
         model = User
         fields = (
@@ -68,8 +59,13 @@ class SubscribeSerializer(CustomUserSerializer):
             "recipes",
             "recipes_count",
         )
-        read_only_fields = ("email", "username", "first_name", "last_name", "recipes_count")
-
+        read_only_fields = (
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "recipes_count",
+        )
 
     def get_recipes(self, obj):
         request = self.context.get("request")
@@ -79,14 +75,13 @@ class SubscribeSerializer(CustomUserSerializer):
             recipes = recipes[: int(recipes_limit)]
         serializer = ShortRecipeSerializer(recipes, many=True)
         return serializer.data
-        
-    # def get_recipes_count(self, obj): 
-    #         return obj.recipe_posts.count()
 
     def validate(self, data):
         request = self.context.get("request")
         author = self.instance
-        check_exist_sibscribe = Subscribe.objects.filter(user=request.user, author=author).exists()
+        check_exist_sibscribe = Subscribe.objects.filter(
+            user=request.user, author=author
+        ).exists()
         if request.method == "DELETE":
             if not check_exist_sibscribe:
                 raise ValidationError("Подписки не было")
@@ -129,9 +124,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     ingredients = AmountIngredientSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(), many=True
-    )
+    tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(), many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
 

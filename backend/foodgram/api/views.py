@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.db.models import Sum
+from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjUserViewSet
@@ -7,29 +7,17 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django.db.models import Count, BooleanField, Case, When
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.mixins import OnlyGetViewSet
-from recipes.models import (
-    AmountIngredient,
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
+from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
+                            Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
-from .serializers import (
-    CustomUserSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeReadSerializer,
-    ShortRecipeSerializer,
-    SubscribeSerializer,
-    TagSerializer,
-)
+from .serializers import (CustomUserSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeReadSerializer,
+                          ShortRecipeSerializer, SubscribeSerializer,
+                          TagSerializer)
 
 
 class UsersViewSet(DjUserViewSet):
@@ -69,14 +57,11 @@ class UsersViewSet(DjUserViewSet):
         serializer = self.get_serializer(self.object)
         return Response(serializer.data)
 
-    @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
-    )
+    @action(methods=["get"], detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
-        subscriptions = User.objects.filter(
-            following__user=request.user).annotate(
-            recipes_count = Count('recipe_posts')
-            )
+        subscriptions = User.objects.filter(following__user=request.user).annotate(
+            recipes_count=Count("recipe_posts")
+        )
         serializer = SubscribeSerializer(
             subscriptions, many=True, context={"request": request}
         )
@@ -127,18 +112,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ).exists()
         if self.request.method == "POST":
             if check_exist_favorite:
-                return Response({'errors': 'Рецепт уже в избранном'},
-                                status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"errors": "Рецепт уже в избранном"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
             FavoriteRecipe.objects.create(user=request.user, recipe=recipe)
-            serializer = ShortRecipeSerializer(
-                recipe, context={"request": request}
-            )
+            serializer = ShortRecipeSerializer(recipe, context={"request": request})
             return Response(serializer.data)
+        # если не обрабатывать этот случай вернется 404 ошибка, а в соотв с redoc должна 400
         if not check_exist_favorite:
-            return Response({'errors': 'Рецепта нет в избранном'}, status=status.HTTP_400_BAD_REQUEST)
-        fav = get_object_or_404(
-            FavoriteRecipe, user=request.user, recipe=recipe
-        )
+            return Response(
+                {"errors": "Рецепта нет в избранном"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        fav = get_object_or_404(FavoriteRecipe, user=request.user, recipe=recipe)
         fav.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -149,46 +136,36 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
+        check_exist_cart = ShoppingCart.objects.filter(
+            user=request.user, recipe=recipe
+        ).exists()
         if self.request.method == "POST":
-            if ShoppingCart.objects.filter(
-                user=request.user, recipe=recipe
-            ).exists():
+            if check_exist_cart:
                 return Response(
                     {"errors": "Рецепт уже есть в корзине"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             else:
                 ShoppingCart.objects.create(user=request.user, recipe=recipe)
-                serializer = ShortRecipeSerializer(
-                    recipe, context={"request": request}
-                )
-                return Response(
-                    serializer.data, status=status.HTTP_201_CREATED
-                )
-        if not ShoppingCart.objects.filter(user=request.user, recipe=recipe).exists():
+                serializer = ShortRecipeSerializer(recipe, context={"request": request})
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        # если не обрабатывать этот случай вернется 404 ошибка, а в соотв с redoc должна 400
+        if not check_exist_cart:
             return Response(
-                    {"errors": "Рецепт не был в корзине"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                {"errors": "Рецепт не был в корзине"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         else:
-            cart = get_object_or_404(
-                    ShoppingCart, user=request.user, recipe=recipe
-                )
+            cart = get_object_or_404(ShoppingCart, user=request.user, recipe=recipe)
             cart.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
-    )
+    @action(methods=["get"], detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request, *args, **kwargs):
         response = HttpResponse(content_type="text/plain")
-        response[
-            "Content-Disposition"
-        ] = "attachment; filename = shopping_list.txt"
+        response["Content-Disposition"] = "attachment; filename = shopping_list.txt"
         ingreds = (
-            AmountIngredient.objects.filter(
-                recipe__shoppingcart__user=request.user
-            )
+            AmountIngredient.objects.filter(recipe__shoppingcart__user=request.user)
             .values("ingredients__name", "ingredients__measurement_unit")
             .annotate(sum_amount=Sum("amount"))
         )

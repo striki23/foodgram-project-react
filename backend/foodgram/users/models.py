@@ -7,7 +7,7 @@ from users.validators import validate_username
 
 class User(AbstractUser):
     username = models.CharField(
-        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
+        max_length=MY_CONSTANTS["LENGTH_SHORTWORD"],
         verbose_name="Пользователь",
         validators=(validate_username,),
         unique=True,
@@ -16,26 +16,26 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(
-        max_length=MY_CONSTANTS['LENGTH_EMAIL'],
+        max_length=MY_CONSTANTS["LENGTH_EMAIL"],
         verbose_name="E-Mail",
         unique=True,
         blank=False,
         null=False,
     )
     first_name = models.CharField(
-        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
+        max_length=MY_CONSTANTS["LENGTH_SHORTWORD"],
         verbose_name="Имя",
         blank=False,
         null=False,
     )
     last_name = models.CharField(
-        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
+        max_length=MY_CONSTANTS["LENGTH_SHORTWORD"],
         verbose_name="Фамилия",
         blank=False,
         null=False,
     )
     password = models.CharField(
-        max_length=MY_CONSTANTS['LENGTH_SHORTWORD'],
+        max_length=MY_CONSTANTS["LENGTH_SHORTWORD"],
         verbose_name="Пароль",
         blank=False,
         null=False,
@@ -50,12 +50,8 @@ class User(AbstractUser):
 
 
 class Subscribe(models.Model):
-    user = models.ForeignKey(
-        User, related_name="follower", on_delete=models.CASCADE
-    )
-    author = models.ForeignKey(
-        User, related_name="following", on_delete=models.CASCADE
-    )
+    user = models.ForeignKey(User, related_name="follower", on_delete=models.CASCADE)
+    author = models.ForeignKey(User, related_name="following", on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
