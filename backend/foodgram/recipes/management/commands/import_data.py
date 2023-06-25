@@ -27,7 +27,7 @@ class Command(BaseCommand):
                     obj, created = Ingredient.objects.get_or_create(
                         name=row[0], measurement_unit=row[1]
                     )
-                    if created == True:
+                    if created is True:
                         cnt += 1
                         print(row)
 

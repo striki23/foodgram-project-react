@@ -2,8 +2,13 @@ from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
 
 from api.forms import RecipeChangeListForm
-from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
-                            Recipe, Tag)
+from recipes.models import (
+    AmountIngredient,
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    Tag,
+)
 
 
 class AmountIngredientInline(admin.TabularInline):
