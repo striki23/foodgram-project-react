@@ -35,7 +35,6 @@ class User(AbstractUser):
         null=False,
     )
     password = models.CharField(
-        max_length=MY_CONSTANTS["LENGTH_SHORTWORD"],
         verbose_name="Пароль",
         blank=False,
         null=False,

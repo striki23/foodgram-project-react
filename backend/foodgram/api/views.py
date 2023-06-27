@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjUserViewSet
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from api.permissions import IsAuthorOrReadOnly, IsAdminOrReadOnly
 from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
@@ -103,6 +104,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     queryset = Recipe.objects.all()
     filterset_class = RecipeFilter
+    permission_classes = (IsAuthorOrReadOnly,)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -115,7 +117,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=["post", "delete"],
         detail=True,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated, IsAuthorOrReadOnly,)
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
@@ -133,8 +135,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 recipe, context={"request": request}
             )
             return Response(serializer.data)
-        # если не обрабатывать этот случай вернется 404 ошибка,
-        # а в соотв с redoc должна 400
         if not check_exist_favorite:
             return Response(
                 {"errors": "Рецепта нет в избранном"},
@@ -149,7 +149,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=["post", "delete"],
         detail=True,
-        permission_classes=[IsAuthenticated],
+        permission_classes=(IsAuthenticated, IsAuthorOrReadOnly,)
     )
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
@@ -170,8 +170,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED
                 )
-        # если не обрабатывать этот случай вернется 404 ошибка,
-        # а в соотв с redoc должна 400
+
         if not check_exist_cart:
             return Response(
                 {"errors": "Рецепт не был в корзине"},
@@ -212,7 +211,7 @@ class IngredientViewSet(OnlyGetViewSet):
 
     serializer_class = IngredientSerializer
     queryset = Ingredient.objects.all()
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [
         IngredientFilter,
     ]
@@ -227,5 +226,5 @@ class TagViewSet(OnlyGetViewSet):
 
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None

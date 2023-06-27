@@ -12,6 +12,7 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile
+    restart: always
     volumes:
       - static_volume:/app/static/
       - media_volume:/app/media/
