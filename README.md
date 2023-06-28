@@ -3,15 +3,15 @@
 ![example workflow](https://github.com/striki23/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
 
 ---
-### **Адрес проекта**
-http://84.252.143.251/admin/ Панель администратора<br>
-http://84.252.143.251/api/docs/ Документация<br>
-http://84.252.143.251/signin Вход на сайт и регистрация<br>
-http://84.252.143.251/recipes Главная страница рецептов<br>
-http://84.252.143.251/subscriptions Подписки<br>
-http://84.252.143.251/recipes/create Создание рецепта<br>
-http://84.252.143.251/favorites Избранное<br>
-http://84.252.143.251/cart Список покупок
+## **Адрес проекта**
+http://84.252.141.69/admin/ Панель администратора<br>
+http://84.252.141.69/api/docs/ Документация<br>
+http://84.252.141.69/signin Вход на сайт и регистрация<br>
+http://84.252.141.69/recipes Главная страница рецептов<br>
+http://84.252.141.69/subscriptions Подписки<br>
+http://84.252.141.69/recipes/create Создание рецепта<br>
+http://84.252.141.69/favorites Избранное<br>
+http://84.252.141.69/cart Список покупок
 
 ---
 ## Техническое описание проекта
@@ -68,7 +68,7 @@ http://84.252.143.251/cart Список покупок
 ### Тестовые пользователи
 Логин: ```admin``` (суперюзер)  
 Email: ```admin@mail.ru```  
-Пароль: ```123456```  
+Пароль: ```change_me```  
 
 Логин: ```user1```  
 Email: ```user1@mail.ru```  
