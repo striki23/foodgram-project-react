@@ -6,6 +6,7 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from api.permissions import IsAuthorOrReadOnly, IsAdminOrReadOnly
+from api.paginations import MyPagination
 from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
@@ -38,6 +39,7 @@ class UsersViewSet(DjUserViewSet):
     serializer_class = CustomUserSerializer
     search_fields = ("username",)
     permission_classes = (permissions.AllowAny,)
+
 
     def get_queryset(self):
         request_user = self.request.user
@@ -75,8 +77,9 @@ class UsersViewSet(DjUserViewSet):
         subscriptions = User.objects.filter(
             following__user=request.user
         ).annotate(recipes_count=Count("recipe_posts"))
+        page = self.paginate_queryset(subscriptions)
         serializer = SubscribeSerializer(
-            subscriptions, many=True, context={"request": request}
+            page, many=True, context={"request": request}
         )
         return Response(serializer.data)
 
