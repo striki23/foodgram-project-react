@@ -1,16 +1,11 @@
+from api.filters import IngredientFilter, RecipeFilter
+from api.mixins import OnlyGetViewSet
+from api.paginations import MyPagination
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjUserViewSet
-from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from api.permissions import IsAuthorOrReadOnly, IsAdminOrReadOnly
-from api.paginations import MyPagination
-from rest_framework.response import Response
-
-from api.filters import IngredientFilter, RecipeFilter
-from api.mixins import OnlyGetViewSet
 from recipes.models import (
     AmountIngredient,
     FavoriteRecipe,
@@ -19,6 +14,13 @@ from recipes.models import (
     ShoppingCart,
     Tag,
 )
+from rest_framework import permissions, status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
 from users.models import Subscribe, User
 
 from .serializers import (
@@ -39,7 +41,6 @@ class UsersViewSet(DjUserViewSet):
     serializer_class = CustomUserSerializer
     search_fields = ("username",)
     permission_classes = (permissions.AllowAny,)
-
 
     def get_queryset(self):
         request_user = self.request.user
@@ -120,7 +121,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=["post", "delete"],
         detail=True,
-        permission_classes=(IsAuthenticated, IsAuthorOrReadOnly,)
+        permission_classes=(
+            IsAuthenticated,
+            IsAuthorOrReadOnly,
+        ),
     )
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
@@ -152,7 +156,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=["post", "delete"],
         detail=True,
-        permission_classes=(IsAuthenticated, IsAuthorOrReadOnly,)
+        permission_classes=(
+            IsAuthenticated,
+            IsAuthorOrReadOnly,
+        ),
     )
     def shopping_cart(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)

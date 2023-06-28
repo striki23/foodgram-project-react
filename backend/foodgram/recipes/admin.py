@@ -1,7 +1,6 @@
+from api.forms import RecipeChangeListForm
 from django.contrib import admin
 from django.contrib.admin.views.main import ChangeList
-
-from api.forms import RecipeChangeListForm
 from recipes.models import (
     AmountIngredient,
     FavoriteRecipe,

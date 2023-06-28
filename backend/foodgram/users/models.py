@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from foodgram.settings import MY_CONSTANTS
 from users.validators import validate_username
 

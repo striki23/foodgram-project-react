@@ -17,7 +17,7 @@ SECRET_KEY = "6a_f_^l)0@mq_)_8r@(03)lat)%zn%w#rmsdi$9#+61&21(2!t"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -151,7 +151,7 @@ AUTH_USER_MODEL = "users.User"
 CSV_FILE_PATH = os.path.join(BASE_DIR, "data")
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
 MEDIA_URL = "/media/"
