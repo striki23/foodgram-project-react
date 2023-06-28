@@ -3,17 +3,12 @@ import base64
 from django.core.files.base import ContentFile
 from django.db.models import F
 from djoser.serializers import UserSerializer
-from recipes.models import (
-    AmountIngredient,
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
+
+from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
+                            Recipe, ShoppingCart, Tag)
 from users.models import Subscribe, User
 
 

@@ -1,37 +1,22 @@
-from api.filters import IngredientFilter, RecipeFilter
-from api.mixins import OnlyGetViewSet
-from api.paginations import MyPagination
-from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjUserViewSet
-from recipes.models import (
-    AmountIngredient,
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    ShoppingCart,
-    Tag,
-)
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import (
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from users.models import Subscribe, User
 
-from .serializers import (
-    CustomUserSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeReadSerializer,
-    ShortRecipeSerializer,
-    SubscribeSerializer,
-    TagSerializer,
-)
+from .serializers import (CustomUserSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeReadSerializer,
+                          ShortRecipeSerializer, SubscribeSerializer,
+                          TagSerializer)
+from api.filters import IngredientFilter, RecipeFilter
+from api.mixins import OnlyGetViewSet
+from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
+from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
+                            Recipe, ShoppingCart, Tag)
+from users.models import Subscribe, User
 
 
 class UsersViewSet(DjUserViewSet):

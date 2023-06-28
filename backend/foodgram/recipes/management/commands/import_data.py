@@ -8,6 +8,7 @@ import os
 
 from django.core.management import BaseCommand
 from foodgram.settings import CSV_FILE_PATH
+
 from recipes.models import Ingredient
 
 
