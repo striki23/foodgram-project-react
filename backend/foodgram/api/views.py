@@ -81,7 +81,7 @@ class UsersViewSet(DjUserViewSet):
         serializer = SubscribeSerializer(
             page, many=True, context={"request": request}
         )
-        return Response(serializer.data)
+        return self.get_paginated_response(serializer.data)
 
     @action(
         methods=["post", "delete"],
