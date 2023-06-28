@@ -2,6 +2,18 @@
 
 ![example workflow](https://github.com/striki23/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
 
+---
+### **Адрес проекта**
+http://84.252.143.251/admin/ Панель администратора<br>
+http://84.252.143.251/api/docs/ Документация<br>
+http://84.252.143.251/signin Вход на сайт и регистрация<br>
+http://84.252.143.251/recipes Главная страница рецептов<br>
+http://84.252.143.251/subscriptions Подписки<br>
+http://84.252.143.251/recipes/create Создание рецепта<br>
+http://84.252.143.251/favorites Избранное<br>
+http://84.252.143.251/cart Список покупок
+
+---
 ## Техническое описание проекта
 Сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать и скачивать список продуктов, которые нужно купить для приготовления выбранных блюд.
 
@@ -51,121 +63,20 @@
 - Лук репчатый (г) — 55
 - Картофель (г) — 1000
 
-При внесении любых изменений в проект, после коммита и пуша
-```
-git add .
-git commit -m "..."
-git push
-```
-запускается набор блоков команд jobs (см. файл [backend.yml](https://github.com/needred/foodgram-project-react/blob/master/.github/workflows/backend.yml), т.к. команда `git push` является триггером workflow проекта.  
 
-Клонируйте репозиторий и перейдите в него в командной строке:
-```
-git clone https://github.com/needred/foodgram-project-react.git
-cd backend
-```
-Создайте и активируйте виртуальное окружение, обновите pip:
-```
-python3 -m venv venv
-. venv/bin/activate
-python3 -m pip install --upgrade pip
-```
-
-## Как развернуть проект на сервере:
-Установите соединение с сервером:
-```
-ssh username@server_address
-```
-Обновите индекс пакетов APT:
-```
-sudo apt update
-```
-и обновите установленные в системе пакеты и установите обновления безопасности:
-```
-sudo apt upgrade -y
-```
-Создайте папку `nginx`:
-```
-mkdir nginx
-```
-Отредактируйте файл `nginx/default.conf` и в строке `server_name` впишите IP виртуальной машины (сервера).  
-Скопируйте подготовленные файлы `docker-compose.yml` и `nginx/default.conf` из вашего проекта на сервер:
-```
-scp docker-compose.yaml <username>@<host>/home/<username>/docker-compose.yaml
-sudo mkdir nginx
-scp default.conf <username>@<host>/home/<username>/nginx/default.conf
-```
-Установите Docker и Docker-compose:
-```
-sudo apt install docker.io
-```
-```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-```
-```
-sudo chmod +x /usr/local/bin/docker-compose
-```
-Проверьте корректность установки Docker-compose:
-```
-sudo  docker-compose --version
-```
-На сервере создайте файл .env 
-```
-touch .env
-```
-и заполните переменные окружения
-```
-nano .env
-```
-или создайте этот файл локально и скопируйте файл по аналогии с предыдущим шагом:
-```
-SECRET_KEY=<SECRET_KEY>
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=postgres
-DB_HOST=db
-DB_PORT=5432
-```
-
-### После успешного деплоя:
-На сервере соберите docker-compose:
-```
-sudo docker-compose up -d --build
-```
-Соберите статические файлы (статику):
-```
-docker-compose exec backend python manage.py collectstatic --no-input
-```
-Примените миграции:
-```
-(опционально) docker-compose exec backend python manage.py makemigrations
-```
-```
-docker-compose exec backend python manage.py migrate --noinput
-```
-Создайте суперпользователя:
-```
-docker-compose exec backend python manage.py createsuperuser
-```
-При необходимости наполните базу тестовыми данными из backend/data/:
-```
-docker-compose exec backend python manage.py load_ingredients
-```
-и
-```
-docker-compose exec backend python manage.py load_tags
-```
 
 ### Тестовые пользователи
 Логин: ```admin``` (суперюзер)  
-Email: ```admin@admin.zz```  
+Email: ```admin@mail.ru```  
 Пароль: ```123456```  
 
 Логин: ```user1```  
-Email: ```user1@user.zz```  
-Пароль: ```user1123456```  
+Email: ```user1@mail.ru```  
+Пароль: ```user25354```  
 
 Логин: ```user2```  
-Email: ```user2@user.zz```  
-Пароль: ```user2123456```
+Email: ```user2@mail.ru```  
+Пароль: ```user25688```
+
+Данный проект является дипломной работой Демидовой Дарьи в рамках обучения на курсе Яндекс.Практикум "Python разработчик"<br>
+https://github.com/striki23 <br>
