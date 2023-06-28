@@ -2,12 +2,12 @@ version: '3.3'
 services:
 
   frontend:
-  image: striki23/foodgram_frontend:latest
-  volumes:
+    image: striki23/foodgram_frontend
+    volumes:
       - ../frontend/:/app/result_build/
   
   backend:
-    image: striki23/foodgram_backend:latest
+    image: striki23/foodgram_backend
     restart: always
     volumes:
       - static_volume:/app/static/
