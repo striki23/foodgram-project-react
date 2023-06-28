@@ -1,6 +1,6 @@
 # Сайт Foodgram «Продуктовый помощник»
 
-![example workflow](https://github.com/striki23/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+![example workflow](https://github.com/striki23/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
 
 ## Техническое описание проекта
 Сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать и скачивать список продуктов, которые нужно купить для приготовления выбранных блюд.
