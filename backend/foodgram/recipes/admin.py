@@ -83,6 +83,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return RecipeChangeListForm
 
     inlines = (IngredientsInline,)
+    search_fields = ("name", "author", "tag",)
 
 
 admin.site.register(FavoriteRecipe)

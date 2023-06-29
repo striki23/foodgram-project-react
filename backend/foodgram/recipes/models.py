@@ -63,10 +63,10 @@ class Recipe(models.Model):
         User, on_delete=models.CASCADE, related_name="recipe_posts", verbose_name="Автор"
     )
     ingredients = models.ManyToManyField(
-        Ingredient, through="AmountIngredient"
+        Ingredient, through="AmountIngredient", verbose_name="Ингредиенты"
     )
 
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, verbose_name="Теги")
 
     image = models.ImageField(
         "Фото блюда", upload_to="recipes/images/", blank=True
@@ -147,8 +147,8 @@ class FavoriteRecipe(ChooseRecipe):
     """Избранные рецепты."""
 
     class Meta:
-        verbose_name = "Избранное"
-        verbose_name_plural = "Избранные"
+        verbose_name = "Избранный рецепт"
+        verbose_name_plural = "Избранные рецепты"
         constraints = (
             models.UniqueConstraint(
                 fields=("user", "recipe"), name="uniq_favorite_user_recipe"
