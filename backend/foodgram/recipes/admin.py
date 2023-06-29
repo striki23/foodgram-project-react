@@ -13,7 +13,7 @@ class AmountIngredientInline(admin.TabularInline):
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     search_fields = ("name",)
-    list_display = ("name", "measurement_unit")
+    list_display = ("id", "name", "measurement_unit")
 
 
 @admin.register(AmountIngredient)
@@ -65,8 +65,8 @@ class RecipeChangeList(ChangeList):
             "tags",
         ]
         self.list_display_links = ["name"]
-        self.search_fields = ("name", "author", "tag")
-        self.list_filter = ("name", "author")
+        self.search_fields = ["name__startswith", "author__startswith", "tag__startswith"]
+        self.list_filter = ["name", "author"]
         self.list_editable = ["tags"]
 
 

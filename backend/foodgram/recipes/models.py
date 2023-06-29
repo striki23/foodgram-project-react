@@ -44,7 +44,7 @@ class Tag(models.Model):
         verbose_name_plural = "Теги"
 
     def __str__(self):
-        return self.name
+        return self.slug
 
 
 class Recipe(models.Model):
@@ -59,7 +59,7 @@ class Recipe(models.Model):
         "Описание приготовления", help_text="Введите текст поста"
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-    author = models.ForeignKey(
+    author = models.ForeignKey("Автор",
         User, on_delete=models.CASCADE, related_name="recipe_posts"
     )
     ingredients = models.ManyToManyField(
