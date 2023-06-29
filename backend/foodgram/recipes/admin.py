@@ -3,7 +3,7 @@ from django.contrib.admin.views.main import ChangeList
 
 from api.forms import RecipeChangeListForm
 from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
-                            Recipe, Tag)
+                            Recipe, Tag, ShoppingCart)
 
 
 class AmountIngredientInline(admin.TabularInline):
@@ -13,7 +13,7 @@ class AmountIngredientInline(admin.TabularInline):
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
     search_fields = ("name",)
-    list_display = ("id", "name", "measurement_unit")
+    list_display = ("id", "name",)
 
 
 @admin.register(AmountIngredient)
@@ -87,3 +87,4 @@ class RecipeAdmin(admin.ModelAdmin):
 
 admin.site.register(FavoriteRecipe)
 admin.site.register(Tag)
+admin.site.register(ShoppingCart)
