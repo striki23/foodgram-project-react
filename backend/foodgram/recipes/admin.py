@@ -65,7 +65,7 @@ class RecipeChangeList(ChangeList):
             "tags",
         ]
         self.list_display_links = ["name"]
-        self.search_fields = ["name__startswith", "author__startswith", "tag__startswith"]
+        self.search_fields = ["name", "author", "tag"]
         self.list_filter = ["name", "author"]
         self.list_editable = ["tags"]
 

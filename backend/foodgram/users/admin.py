@@ -16,5 +16,5 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Subscribe)
 class SubscribeAdmin(admin.ModelAdmin):
-    search_fields = ("id", "first_name", "last_name")
-    list_display = ("id", "user", "author", "first_name", "last_name")
+    search_fields = ("id",)
+    list_display = ("id", "user", "author")

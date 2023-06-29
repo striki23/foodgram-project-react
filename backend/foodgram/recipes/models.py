@@ -59,7 +59,7 @@ class Recipe(models.Model):
         "Описание приготовления", help_text="Введите текст поста"
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
-    author = models.ForeignKey("Автор",
+    author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="recipe_posts"
     )
     ingredients = models.ManyToManyField(
