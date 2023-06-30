@@ -181,6 +181,5 @@ Email: ```user1@mail.ru```
 Логин: ```user2```  
 Email: ```user2@mail.ru```  
 Пароль: ```user25688```
-```
+
 Автор: [Демидова Дарья](https://github.com/striki23)
-```
