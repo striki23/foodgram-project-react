@@ -3,6 +3,17 @@
 ![example workflow](https://github.com/striki23/foodgram-project-react/actions/workflows/foodgram.yml/badge.svg)
 
 ---
+### Стэк технологий:
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
+[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/)
+[![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/)
+[![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/)
+[![gunicorn](https://img.shields.io/badge/-gunicorn-464646?style=flat-square&logo=gunicorn)](https://gunicorn.org/)
+[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
+[![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
+
+---
 ## **Адрес проекта**
 http://84.252.141.69/admin/ Панель администратора<br>
 http://84.252.141.69/api/docs/ Документация<br>
@@ -16,7 +27,6 @@ http://84.252.141.69/cart Список покупок
 ---
 ## Техническое описание проекта
 Сайт, на котором пользователи могут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Сервис «Список покупок» позволит пользователям создавать и скачивать список продуктов, которые нужно купить для приготовления выбранных блюд.
-
 
 ### Сервисы и страницы проекта
 #### Главная страница
@@ -63,8 +73,102 @@ http://84.252.141.69/cart Список покупок
 - Лук репчатый (г) — 55
 - Картофель (г) — 1000
 
+## Инструкция по запуску проекта на удаленном сервере:
+#### 1. Подключиться и авторизоваться на удаленном сервере:
+```
+ssh <имя_сервера>@<публичный_ip_сервера>
+```
+#### 2. Установите docker и docker-compose:
+* Установка docker:
+```
+sudo apt install docker.io
+```
+* Установка docker-compose:
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+#### 3. Найстройка nginx.conf и docker-compose.yml:
+* Отредактируйте файл infra/nginx.conf и в строке server_name замените IP по умолчанию на свой IP
+* Скопируйте файлы docker-compose.yml и nginx.conf из директории infra в директорию /home/<username>
+```
+sudo cp docker-compose.yml /home/<username>/
+sudo cp nginx.conf /home/<username>/
+```
 
+#### 3.1 Дополнительно. Создание .env файла для локального запуска:
+* Важно! Если решите запустить проект локально, для работы и запуска потребуется .env файл.
+* Внутри самого проекта. В папке backend/foodgram/ на уровне файла settings.py
+* Создайте файл .env:
+```
+sudo touch .env
+```
+* Откройте файл .env:
+```
+sudo nano .env
+```
+* заполните файл соответствующими данными:
+```
+    SECRET_KEY=<секретный ключ проекта django>
+    DB_ENGINE=<django.db.backends.postgresql>
+    DB_NAME=<имя базы данных postgres>
+    POSTGRES_USER=<пользователь бд>
+    POSTGRES_PASSWORD=<пароль>
+    DB_HOST=<db>
+    DB_PORT=<5432>
+    DEBUG=<настройки Дебага>
+    ALLOWED_HOSTS=<список разрешенных хостов/доменов>
+```
+* Примечание! При автоматическом deploy и развертывание проекта на сервере, данный файл создается автоматически.
 
+#### 4. Подготовка и запуск Workflow:
+* Для работы с Workflow добавьте в Secrets GitHub переменные окружения для работы:
+```
+    SECRET_KEY=<секретный ключ проекта django>
+    DB_ENGINE=<django.db.backends.postgresql>
+    DB_NAME=<имя базы данных postgres>
+    POSTGRES_USER=<пользователь бд>
+    POSTGRES_PASSWORD=<пароль>
+    DB_HOST=<db>
+    DB_PORT=<5432>
+    DEBUG=<настройки Дебага>
+    ALLOWED_HOSTS=<список разрешенных хостов/доменов>
+    DOCKERHUB_PASSWORD=<пароль от DockerHub>
+    DOCKERHUB_LOGIN=<имя пользователя на DockerHub>
+    TELEGRAM_TO=<ID чата, в который придет сообщение>
+    TELEGRAM_TOKEN=<токен вашего бота>
+```
+
+#### 5. Сборка образа и запуск docker-compose:
+* Для ручного запуска проекта.
+  По пути foodgram-project-react/infra запустите docker-compose:
+```
+sudo docker-compose up -d --build
+```
+
+#### 6. Создание таблиц БД и сбор файлов статики:
+* Примечание! Данные команды необходимы при ручном запуске. В Workflow данные команды выполняются автоматически.
+
+* Подготовка к миграциям внутри контейнера:
+```
+sudo docker-compose exec backend python manage.py makemigrations --noinput
+```
+* Запуск миграций:
+```
+sudo docker-compose exec backend python manage.py migrate --noinput
+```
+* Сбор файлов статики:
+```
+sudo docker-compose exec backend python manage.py collectstatic --noinput
+```
+* Загрузка в БД списка ингредиентов:
+```
+sudo docker-compose exec backend python manage.py import_data
+```
+* Создайте суперпользователя с правами администратора:
+```
+sudo docker-compose exec backend python manage.py createsuperuser
+```
 ### Тестовые пользователи
 Логин: ```admin``` (суперюзер)  
 Email: ```admin@mail.ru```  
@@ -77,6 +181,6 @@ Email: ```user1@mail.ru```
 Логин: ```user2```  
 Email: ```user2@mail.ru```  
 Пароль: ```user25688```
-
-Данный проект является дипломной работой Демидовой Дарьи в рамках обучения на курсе Яндекс.Практикум "Python разработчик"<br>
-https://github.com/striki23 <br>
+```
+Автор: [Демидова Дарья](https://github.com/striki23)
+```
