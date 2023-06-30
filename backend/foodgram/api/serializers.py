@@ -15,17 +15,6 @@ from users.models import Subscribe, User
 class CustomUserSerializer(UserSerializer):
     is_subscribed = serializers.BooleanField(default=False)
 
-    def create(self, validated_data):
-        user = User.objects.create(
-            username=validated_data["username"],
-            first_name=validated_data["first_name"],
-            last_name=validated_data["last_name"],
-            email=validated_data["email"],
-        )
-        user.set_password(validated_data["password"])
-        user.save()
-        return user
-
     class Meta:
         model = User
         fields = (
@@ -40,6 +29,17 @@ class CustomUserSerializer(UserSerializer):
         extra_kwargs = {
             "password": {"write_only": True},
         }
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data["username"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
+            email=validated_data["email"],
+        )
+        user.set_password(validated_data["password"])
+        user.save()
+        return user
 
 
 class SubscribeSerializer(CustomUserSerializer):
@@ -210,15 +210,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         user = self.context["request"].user
-        if user.is_anonymous:
-            return False
-        return FavoriteRecipe.objects.filter(user=user, recipe=obj).exists()
+        return (
+            False
+            if user.is_anonymous
+            else FavoriteRecipe.objects.filter(user=user, recipe=obj).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context["request"].user
-        if user.is_anonymous:
-            return False
-        return ShoppingCart.objects.filter(user=user, recipe=obj).exists()
+        return (
+            False
+            if user.is_anonymous
+            else ShoppingCart.objects.filter(user=user, recipe=obj).exists()
+        )
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):

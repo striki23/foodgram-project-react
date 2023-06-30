@@ -60,10 +60,13 @@ class Recipe(models.Model):
     )
     pub_date = models.DateTimeField("Дата публикации", auto_now_add=True)
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="recipe_posts", verbose_name="Автор"
+        User,
+        on_delete=models.CASCADE,
+        related_name="recipe_posts",
+        verbose_name="Автор",
     )
     ingredients = models.ManyToManyField(
-        Ingredient, through="AmountIngredient", verbose_name="Ингредиенты"
+        Ingredient, verbose_name="Ингредиенты", through="AmountIngredient"
     )
 
     tags = models.ManyToManyField(Tag, verbose_name="Теги")
@@ -84,7 +87,12 @@ class Recipe(models.Model):
             )
         )
 
-    ingredients_names.short_description = "Ingredients"
+    ingredients_names.short_description = "Ингредиенты"
+
+    def tags_slug(self):
+        return " %s" % (", ".join([tag.slug for tag in self.tags.all()]))
+
+    tags_slug.short_description = "Теги"
 
     class Meta:
         verbose_name = "Рецепт"
